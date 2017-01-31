@@ -1,0 +1,50 @@
+{
+  "name": "localdown",
+  "version": "0.1.0",
+  "description": "A localStorage implementation of the LevelDOWN API",
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhoriuchi/localdown.git"
+  },
+  "scripts": {
+    "build:copybrc": "cp build/.build.babelrc src/.babelrc",
+    "build:rmbrc": "rm -f src/.babelrc",
+    "build": "cp build/.build.babelrc src/.babelrc && rollup -c build/rollup.config.js && rm -f src/.babelrc",
+    "test": "npm run build && mocha test/index.js"
+  },
+  "author": "Branden Horiuchi <bhoriuchi@gmail.com>",
+  "dependencies": {
+    "abstract-leveldown": "^2.6.1",
+    "node-localstorage": "^1.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "babel-core": "^6.21.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-2": "^6.18.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-runtime": "^6.20.0",
+    "babel-register": "^6.18.0",
+    "mocha": "^3.0.0",
+    "rollup": "^0.38.0",
+    "rollup-plugin-babel": "^2.7.0",
+    "babel-preset-es2015-rollup": "^3.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/bhoriuchi/localdown/issues"
+  },
+  "homepage": "https://github.com/bhoriuchi/localdown#readme",
+  "directories": {
+    "example": "example"
+  },
+  "keywords": [
+    "localstorage",
+    "level",
+    "levelup",
+    "leveldown",
+    "database",
+    "db"
+  ]
+}
