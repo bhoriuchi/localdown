@@ -3,6 +3,7 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var LocalStorage = _interopDefault(require('node-localstorage'));
+var stringify = _interopDefault(require('json-stringify-safe'));
 var util = _interopDefault(require('util'));
 var fs = _interopDefault(require('fs'));
 var path = _interopDefault(require('path'));
@@ -121,6 +122,16 @@ function DOWNError(error) {
     }
   }
   return new Error(String(error));
+}
+
+function safeParse(val) {
+  try {
+    var parsed = JSON.parse(val);
+    if (parsed.type === 'Buffer') return new Buffer.from(parsed);
+    return parsed;
+  } catch (err) {
+    return val;
+  }
 }
 
 /**
@@ -300,7 +311,7 @@ var LocalIterator = function (_AbstractIterator) {
 
         // get/convert key and value
         var key = asBuffer(this.$keys[this.$current], this._keyAsBuffer);
-        var value = asBuffer(this.db.$store.getItem(key), this._valueAsBuffer);
+        var value = asBuffer(safeParse(this.db.$store.getItem(key)), this._valueAsBuffer);
 
         // increment the current and iterations counters
         this.$current = this.$reverse ? this.$current - 1 : this.$current + 1;
@@ -369,23 +380,17 @@ var LocalDOWN = function (_AbstractLevelDOWN) {
       var _this4 = this;
 
       try {
-        var _ret = function () {
-          // support some of the open options
-          var errorIfExists = options.errorIfExists;
+        // support some of the open options
+        var errorIfExists = options.errorIfExists;
 
 
-          errorIfExists = typeof errorIfExists === 'boolean' ? errorIfExists : false;
+        errorIfExists = typeof errorIfExists === 'boolean' ? errorIfExists : false;
 
-          return {
-            v: fs.stat(_this4.location, function (error) {
-              if (!error && errorIfExists) return callback(DOWNError(ERR_FILE_EXISTS));
-              _this4.$store = new LocalStorage.LocalStorage(_this4.location);
-              return callback();
-            })
-          };
-        }();
-
-        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+        return fs.stat(this.location, function (error) {
+          if (!error && errorIfExists) return callback(DOWNError(ERR_FILE_EXISTS));
+          _this4.$store = new LocalStorage.LocalStorage(_this4.location);
+          return callback();
+        });
       } catch (error) {
         return callback(DOWNError(error));
       }
@@ -417,7 +422,7 @@ var LocalDOWN = function (_AbstractLevelDOWN) {
     key: '_get',
     value: function _get(key, options, callback) {
       try {
-        return callback(null, asBuffer(this.$store.getItem(key), options.asBuffer !== false));
+        return callback(null, asBuffer(safeParse(this.$store.getItem(key)), options.asBuffer !== false));
       } catch (error) {
         return callback(DOWNError(error));
       }
@@ -437,7 +442,7 @@ var LocalDOWN = function (_AbstractLevelDOWN) {
     key: '_put',
     value: function _put(key, value, options, callback) {
       try {
-        this.$store.setItem(key, value);
+        this.$store.setItem(key, stringify(value));
         return callback();
       } catch (error) {
         return callback(DOWNError(error));
@@ -493,7 +498,7 @@ var LocalDOWN = function (_AbstractLevelDOWN) {
               case PUT_OPERATION:
                 // coerce the value into a valid value
                 value = this._serializeValue(value);
-                this.$store.setItem(key, value);
+                this.$store.setItem(key, stringify(value));
                 break;
 
               case DEL_OPERATION:
