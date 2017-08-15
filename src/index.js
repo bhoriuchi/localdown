@@ -4,7 +4,6 @@
  * @author Branden Horiuchi <bhoriuchi@gmail.com>
  */
 import LocalStorage from 'node-localstorage'
-import stringify from 'json-stringify-safe'
 import util from 'util'
 import fs from 'fs'
 import path from 'path'
@@ -42,16 +41,6 @@ function DOWNError (error) {
     }
   }
   return new Error(String(error))
-}
-
-function safeParse (val) {
-  try {
-    let parsed = JSON.parse(val)
-    if (parsed.type === 'Buffer') return new Buffer.from(parsed)
-    return parsed
-  } catch (err) {
-    return val
-  }
 }
 
 /**
@@ -170,7 +159,7 @@ class LocalIterator extends AbstractIterator {
 
       // get/convert key and value
       let key = asBuffer(this.$keys[this.$current], this._keyAsBuffer)
-      let value = asBuffer(safeParse(this.db.$store.getItem(key)), this._valueAsBuffer)
+      let value = asBuffer(this.db.$store.getItem(key), this._valueAsBuffer)
 
       // increment the current and iterations counters
       this.$current = this.$reverse ? this.$current - 1 : this.$current + 1
@@ -264,7 +253,7 @@ class LocalDOWN extends AbstractLevelDOWN {
    */
   _get (key, options, callback) {
     try {
-      return callback(null, asBuffer(safeParse(this.$store.getItem(key)), options.asBuffer !== false))
+      return callback(null, asBuffer(this.$store.getItem(key), options.asBuffer !== false))
     } catch (error) {
       return callback(DOWNError(error))
     }
@@ -281,7 +270,7 @@ class LocalDOWN extends AbstractLevelDOWN {
    */
   _put (key, value, options, callback) {
     try {
-      this.$store.setItem(key, stringify(value))
+      this.$store.setItem(key, value)
       return callback()
     } catch (error) {
       return callback(DOWNError(error))
@@ -322,7 +311,7 @@ class LocalDOWN extends AbstractLevelDOWN {
           case PUT_OPERATION:
             // coerce the value into a valid value
             value = this._serializeValue(value)
-            this.$store.setItem(key, stringify(value))
+            this.$store.setItem(key, value)
             break
 
           case DEL_OPERATION:

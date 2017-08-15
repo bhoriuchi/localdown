@@ -35,5 +35,9 @@ export default function testGet () {
     it('Should get a BINARY as STRING', (done) => {
       getRecord('BIN', 'putRecordBinary', false, done)
     })
+
+    it('Should get an object', done => {
+      getRecord('obj', JSON.stringify({ obj: true }), false, done)
+    })
   })
 }

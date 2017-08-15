@@ -23,5 +23,9 @@ export default function testPut () {
     it('Should put a BINARY record into the table', (done) => {
       putRecord('BIN', new Buffer('putRecordBinary'), done)
     })
+
+    it('Should put an Object value into the table', done => {
+      putRecord('obj', JSON.stringify({ obj: true }), done)
+    })
   })
 }

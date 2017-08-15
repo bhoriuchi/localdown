@@ -4,6 +4,6 @@ export default {
   entry: 'src/index.js',
   format: 'cjs',
   plugins: [ babel() ],
-  external: ['node-localstorage', 'util', 'fs', 'path', 'abstract-leveldown', 'json-stringify-safe'],
+  external: ['node-localstorage', 'util', 'fs', 'path', 'abstract-leveldown'],
   dest: 'index.js'
 }
