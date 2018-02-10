@@ -188,8 +188,9 @@ class LocalIterator extends AbstractIterator {
 
 
 class LocalDOWN extends AbstractLevelDOWN {
-  constructor (location) {
+  constructor (location, quota) {
     super(path.resolve(location))
+    this.quota = quota
 
     // validate that the location is a string and replace any invalid characters with _
     if (typeof location !== 'string') throw DOWNError(util.format(ERR_INVALID_PARAM, 'location', 'String'))
@@ -225,7 +226,7 @@ class LocalDOWN extends AbstractLevelDOWN {
 
       return fs.stat(this.location, (error) => {
         if (!error && errorIfExists) return callback(DOWNError(ERR_FILE_EXISTS))
-        this.$store = new LocalStorage.LocalStorage(this.location)
+        this.$store = new LocalStorage.LocalStorage(this.location, this.quota)
         return callback()
       })
     } catch (error) {

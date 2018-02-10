@@ -338,12 +338,14 @@ var LocalIterator = function (_AbstractIterator) {
 var LocalDOWN = function (_AbstractLevelDOWN) {
   inherits(LocalDOWN, _AbstractLevelDOWN);
 
-  function LocalDOWN(location) {
+  function LocalDOWN(location, quota) {
     classCallCheck(this, LocalDOWN);
 
-    // validate that the location is a string and replace any invalid characters with _
     var _this3 = possibleConstructorReturn(this, (LocalDOWN.__proto__ || Object.getPrototypeOf(LocalDOWN)).call(this, path.resolve(location)));
 
+    _this3.quota = quota;
+
+    // validate that the location is a string and replace any invalid characters with _
     if (typeof location !== 'string') throw DOWNError(util.format(ERR_INVALID_PARAM, 'location', 'String'));
     return _this3;
   }
@@ -377,7 +379,7 @@ var LocalDOWN = function (_AbstractLevelDOWN) {
 
         return fs.stat(this.location, function (error) {
           if (!error && errorIfExists) return callback(DOWNError(ERR_FILE_EXISTS));
-          _this4.$store = new LocalStorage.LocalStorage(_this4.location);
+          _this4.$store = new LocalStorage.LocalStorage(_this4.location, _this4.quota);
           return callback();
         });
       } catch (error) {
