@@ -24,3 +24,10 @@ db.open((error) => {
   })
 })
 ```
+
+### Constructor
+
+#### `localdown(location[,quota])`
+
+* location - file path
+* quota - storage quota, optional
